@@ -1,11 +1,11 @@
 package geektime
 
 import (
+	"github.com/go-resty/resty/v2"
 	"net/http"
 	"time"
 
-	"github.com/go-resty/resty/v2"
-	pgt "github.com/nicoxiang/geektime-downloader/internal/pkg/geektime"
+	pgt "github.com/namejlt/geektime-downloader/internal/pkg/geektime"
 )
 
 // Login call geektime login api and return auth cookies

@@ -11,18 +11,18 @@ import (
 	"strings"
 	"time"
 
-	pgt "github.com/nicoxiang/geektime-downloader/internal/pkg/geektime"
+	pgt "github.com/namejlt/geektime-downloader/internal/pkg/geektime"
 )
 
 const (
 	// MAXLENGTH Max file name length
-	MAXLENGTH                = 80
+	MAXLENGTH = 80
 	// GeektimeDownloaderFolder app config and download root dolder name
 	GeektimeDownloaderFolder = "geektime-downloader"
-	// ExpireConfigLineKey in config file 
-	ExpireConfigLineKey      = "EXPIRE"
+	// ExpireConfigLineKey in config file
+	ExpireConfigLineKey = "EXPIRE"
 	// ExpireLayout in config file
-	ExpireLayout             = "Mon, 02 Jan 2006 15:04:05 -0700"
+	ExpireLayout = "Mon, 02 Jan 2006 15:04:05 -0700"
 )
 
 var userConfigDir string
@@ -110,8 +110,8 @@ func ReadCookieFromConfigFile(phone string) ([]*http.Cookie, error) {
 	return nil, nil
 }
 
-// WriteCookieToConfigFile write cookies to config file with specified phone prefix file name, 
-// and write cookie 'GCESS' expire date into config too. 
+// WriteCookieToConfigFile write cookies to config file with specified phone prefix file name,
+// and write cookie 'GCESS' expire date into config too.
 func WriteCookieToConfigFile(phone string, cookies []*http.Cookie) error {
 	dir := filepath.Join(userConfigDir, GeektimeDownloaderFolder)
 	if err := os.MkdirAll(dir, os.ModePerm); err != nil {

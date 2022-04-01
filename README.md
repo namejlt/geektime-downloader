@@ -2,7 +2,7 @@
 
 geektime-downloader 目前支持下载专栏为PDF文档。
 
-[![go report card](https://goreportcard.com/badge/github.com/nicoxiang/geektime-downloader "go report card")](https://goreportcard.com/report/github.com/nicoxiang/geektime-downloader)
+[![go report card](https://goreportcard.com/badge/github.com/namejlt/geektime-downloader "go report card")](https://goreportcard.com/report/github.com/namejlt/geektime-downloader)
 [![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 
 ## Usage
@@ -15,10 +15,10 @@ Chrome installed
 
 ```bash
 # Go 1.16+
-go install github.com/nicoxiang/geektime-downloader@latest
+go install github.com/namejlt/geektime-downloader@latest
 
 # Go version < 1.16
-go get -u github.com/nicoxiang/geektime-downloader
+go get -u github.com/namejlt/geektime-downloader
 ```
 
 ### Download binary files

@@ -1,6 +1,6 @@
 package main
 
-import "github.com/nicoxiang/geektime-downloader/cmd"
+import "github.com/namejlt/geektime-downloader/cmd"
 
 func main() {
 	cmd.Execute()

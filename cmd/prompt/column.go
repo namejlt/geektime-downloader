@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/manifoldco/promptui"
-	"github.com/nicoxiang/geektime-downloader/internal/geektime"
+	"github.com/namejlt/geektime-downloader/internal/geektime"
 )
 
 // SelectColumn show select promt to choose a column

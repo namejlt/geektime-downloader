@@ -3,6 +3,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"github.com/go-resty/resty/v2"
 	"math"
 	"os"
 	"path/filepath"
@@ -12,12 +13,11 @@ import (
 
 	"github.com/briandowns/spinner"
 	"github.com/gammazero/workerpool"
-	"github.com/go-resty/resty/v2"
-	"github.com/nicoxiang/geektime-downloader/cmd/prompt"
-	"github.com/nicoxiang/geektime-downloader/internal/geektime"
-	"github.com/nicoxiang/geektime-downloader/internal/loader"
-	"github.com/nicoxiang/geektime-downloader/internal/pkg/chromedp"
-	"github.com/nicoxiang/geektime-downloader/internal/pkg/util"
+	"github.com/namejlt/geektime-downloader/cmd/prompt"
+	"github.com/namejlt/geektime-downloader/internal/geektime"
+	"github.com/namejlt/geektime-downloader/internal/loader"
+	"github.com/namejlt/geektime-downloader/internal/pkg/chromedp"
+	"github.com/namejlt/geektime-downloader/internal/pkg/util"
 	"github.com/spf13/cobra"
 )
 

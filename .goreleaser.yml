@@ -2,7 +2,7 @@ release:
   name_template: "{{ .Version }} - {{ .Date }}"
   draft: true
   header: |
-    [![Github Releases ({{ .Tag }})](https://img.shields.io/github/downloads/nicoxiang/geektime-downloader/{{ .Tag }}/total.svg)](https://github.com/nicoxiang/geektime-downloader/releases/latest) [![Github All Releases](https://img.shields.io/github/downloads/nicoxiang/geektime-downloader/total.svg)](https://github.com/nicoxiang/geektime-downloader/releases)
+    [![Github Releases ({{ .Tag }})](https://img.shields.io/github/downloads/nicoxiang/geektime-downloader/{{ .Tag }}/total.svg)](https://github.com/namejlt/geektime-downloader/releases/latest) [![Github All Releases](https://img.shields.io/github/downloads/nicoxiang/geektime-downloader/total.svg)](https://github.com/namejlt/geektime-downloader/releases)
 builds:
   - env:
       - CGO_ENABLED=0
