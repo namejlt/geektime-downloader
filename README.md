@@ -14,11 +14,15 @@ Chrome installed
 ### Install form source
 
 ```bash
-# Go 1.16+
+# Go 1.17+
 go install github.com/namejlt/geektime-downloader@latest
 
-# Go version < 1.16
-go get -u github.com/namejlt/geektime-downloader
+or
+
+git clone github.com/namejlt/geektime-downloader
+make build
+make run xxx
+
 ```
 
 ### Download binary files
@@ -29,7 +33,17 @@ See release page
 
 ```bash
 ## windows 为例
-> geektime-downloader.exe -u "phone number"
+
+下载我的栏目课程
+
+> geektime-downloader.exe columns -u "phone number"
+
+
+下载指定栏目课程
+
+> geektime-downloader.exe diy -u "phone number" -i "column id"
+
+> geektime-downloader.exe diy -u 13800000000 -i 100056701
 ```
 
 ### Help
@@ -41,14 +55,51 @@ See release page
 Geektime-downloader is used to download geek time lessons
 
 Usage:
-  geektime-downloader [flags]
+geektime-downloader [flags]
+geektime-downloader [command]
+
+Available Commands:
+columns     Geektime-downloader is used to download geek time lessons
+completion  Generate the autocompletion script for the specified shell
+diy         Geektime-downloader is used to download geek time lessons diy
+help        Help about any command
 
 Flags:
-  -c, --concurrency int   下载文章的并发数 (default 4)
-  -f, --folder string     PDF 文件下载目标位置 (default "")
-  -h, --help              help for geektime-downloader
-  -u, --phone string      你的极客时间账号(手机号)(required)
+-h, --help   help for geektime-downloader
+
+
+> geektime-downloader.exe columns -h
+
+Geektime-downloader is used to download geek time lessons
+
+Usage:
+geektime-downloader columns [flags]
+
+Flags:
+-c, --concurrency int   下载文章的并发数 (default 4)
+-f, --folder string     PDF 文件下载目标位置 (default "/Users/tynam/geektime-downloader")
+-h, --help              help for columns
+-u, --phone string      你的极客时间账号(手机号)(required)
+
+
+> geektime-downloader.exe diy -h
+
+
+Geektime-downloader is used to download geek time lessons diy
+
+Usage:
+geektime-downloader diy [flags]
+
+Flags:
+-i, --column_diy_id int   指定下载课程id
+-c, --concurrency int     下载文章的并发数 (default 4)
+-f, --folder string       PDF 文件下载目标位置 (default "/Users/tynam/geektime-downloader")
+-h, --help                help for diy
+-u, --phone string        你的极客时间账号(手机号)(required)
+
+
 ```
+
 
 ## Note
 
@@ -58,6 +109,6 @@ Flags:
 
 3. 登录后填入指定课程的开篇页面地址，自动解析下载，要保证有订阅权限
 
-## Inspired by 
+## Inspired by
 
 * [geektime-dl](https://github.com/mmzou/geektime-dl)

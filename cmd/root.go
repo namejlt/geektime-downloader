@@ -26,6 +26,7 @@ var (
 	concurrency        int
 	downloadFolder     string
 	l                  *spinner.Spinner
+	columnDiyId        int
 	columns            []geektime.ColumnSummary
 	currentColumnIndex int
 )
@@ -34,22 +35,39 @@ func init() {
 	userHomeDir, _ := os.UserHomeDir()
 	defaultConcurency := int(math.Ceil(float64(runtime.NumCPU()) / 2.0))
 	defaultDownloadFolder := filepath.Join(userHomeDir, util.GeektimeDownloaderFolder)
-	rootCmd.Flags().StringVarP(&phone, "phone", "u", "", "你的极客时间账号(手机号)(required)")
-	_ = rootCmd.MarkFlagRequired("phone")
-	rootCmd.Flags().StringVarP(&downloadFolder, "folder", "f", defaultDownloadFolder, "PDF 文件下载目标位置")
-	rootCmd.Flags().IntVarP(&concurrency, "concurrency", "c", defaultConcurency, "下载文章的并发数")
+	selectColumnCmd.Flags().StringVarP(&phone, "phone", "u", "", "你的极客时间账号(手机号)(required)")
+	_ = selectColumnCmd.MarkFlagRequired("phone")
+	selectColumnCmd.Flags().StringVarP(&downloadFolder, "folder", "f", defaultDownloadFolder, "PDF 文件下载目标位置")
+	selectColumnCmd.Flags().IntVarP(&concurrency, "concurrency", "c", defaultConcurency, "下载文章的并发数")
+
+	selectDiyCmd.Flags().StringVarP(&phone, "phone", "u", "", "你的极客时间账号(手机号)(required)")
+	_ = selectDiyCmd.MarkFlagRequired("phone")
+	selectDiyCmd.Flags().StringVarP(&downloadFolder, "folder", "f", defaultDownloadFolder, "PDF 文件下载目标位置")
+	selectDiyCmd.Flags().IntVarP(&concurrency, "concurrency", "c", defaultConcurency, "下载文章的并发数")
+	selectDiyCmd.Flags().IntVarP(&columnDiyId, "column_diy_id", "i", 0, "指定下载课程id")
+	_ = selectDiyCmd.MarkFlagRequired("column_diy_id")
 	l = loader.NewSpinner()
 }
 
+// rootCmd 执行命令
 var rootCmd = &cobra.Command{
 	Use:   "geektime-downloader",
 	Short: "Geektime-downloader is used to download geek time lessons",
 	Run: func(cmd *cobra.Command, args []string) {
-		readCookies, err := util.ReadCookieFromConfigFile(phone)
+		//不执行内容 具体执行在子命令
+	},
+}
+
+// selectColumnCmd 选择栏目
+var selectColumnCmd = &cobra.Command{
+	Use:   "columns",
+	Short: "Geektime-downloader is used to download geek time lessons",
+	Run: func(cmd *cobra.Command, args []string) {
+		readCookies, err := util.ReadCookieFromConfigFile(phone) //获取登录态
 		if err != nil {
 			printErrAndExit(err)
 		}
-		if readCookies == nil {
+		if readCookies == nil { // 不存在 则登录
 			pwd := prompt.GetPwd()
 			loader.Run(l, "[ 正在登录... ]", func() {
 				errMsg, cookies := geektime.Login(phone, pwd)
@@ -58,14 +76,20 @@ var rootCmd = &cobra.Command{
 					os.Exit(1)
 				}
 				readCookies = cookies
-				err := util.WriteCookieToConfigFile(phone, cookies)
+				err := util.WriteCookieToConfigFile(phone, cookies) //保存登录态
 				if err != nil {
 					printErrAndExit(err)
 				}
 			})
 			fmt.Println("登录成功")
 		}
-		client := geektime.NewTimeGeekRestyClient(readCookies)
+		client := geektime.NewTimeGeekRestyClient(readCookies) //封装包含登录态的http client
+
+		/**
+
+		根据已有栏目下载
+
+		*/
 
 		loader.Run(l, "[ 正在加载已购买专栏列表... ]", func() {
 			c, err := geektime.GetColumnList(client)
@@ -73,6 +97,55 @@ var rootCmd = &cobra.Command{
 				printErrAndExit(err)
 			}
 			columns = c
+		})
+
+		selectColumn(client)
+	},
+}
+
+// selectDiyCmd 手工选择课程下载
+var selectDiyCmd = &cobra.Command{
+	Use:   "diy",
+	Short: "Geektime-downloader is used to download geek time lessons diy",
+	Run: func(cmd *cobra.Command, args []string) {
+		readCookies, err := util.ReadCookieFromConfigFile(phone) //获取登录态
+		if err != nil {
+			printErrAndExit(err)
+		}
+		if readCookies == nil { // 不存在 则登录
+			pwd := prompt.GetPwd()
+			loader.Run(l, "[ 正在登录... ]", func() {
+				errMsg, cookies := geektime.Login(phone, pwd)
+				if errMsg != "" {
+					fmt.Fprintln(os.Stderr, errMsg)
+					os.Exit(1)
+				}
+				readCookies = cookies
+				err := util.WriteCookieToConfigFile(phone, cookies) //保存登录态
+				if err != nil {
+					printErrAndExit(err)
+				}
+			})
+			fmt.Println("登录成功")
+		}
+		client := geektime.NewTimeGeekRestyClient(readCookies) //封装包含登录态的http client
+
+		/**
+
+		1、根据入参找到对应课程并检查权限
+		2、批量下载课程
+
+		*/
+		loader.Run(l, "[ 正在检测课程是否有权限... ]", func() {
+			c, err := geektime.GetColumnInfo(client, columnDiyId)
+			if err != nil {
+				printErrAndExit(err)
+			}
+			if c.CID == 0 { //仅检测是否存在 要保证有权限获取全部文章 不然下载的是试读
+				err = errors.New("栏目不存在")
+				printErrAndExit(err)
+			}
+			columns = append(columns, c)
 		})
 
 		selectColumn(client)
@@ -96,6 +169,14 @@ func handleSelectColumn(client *resty.Client) {
 	option := prompt.SelectDownLoadAllOrSelectArticles(columns[currentColumnIndex].Title)
 	handleSelectDownloadAll(option, client)
 }
+
+/**
+
+{"返回上一级", 0},
+{"下载当前专栏所有文章", 1},
+{"选择文章", 2},
+
+*/
 
 func handleSelectDownloadAll(option int, client *resty.Client) {
 	switch option {
@@ -186,14 +267,16 @@ func mkColumnDownloadFolder(phone, columnName string) (string, error) {
 	return path, nil
 }
 
-// Execute func
+// Execute func 执行函数
 func Execute() {
+	rootCmd.AddCommand(selectColumnCmd, selectDiyCmd)
+
 	if err := rootCmd.Execute(); err != nil {
 		printErrAndExit(err)
 	}
 }
 
-func printErrAndExit(err error) {
+func printErrAndExit(err error) { // 打印报错
 	fmt.Fprintln(os.Stderr, err)
 	os.Exit(1)
 }

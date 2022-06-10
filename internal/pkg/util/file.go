@@ -17,7 +17,7 @@ import (
 const (
 	// MAXLENGTH Max file name length
 	MAXLENGTH = 80
-	// GeektimeDownloaderFolder app config and download root dolder name
+	// GeektimeDownloaderFolder app config and download root folder name
 	GeektimeDownloaderFolder = "geektime-downloader"
 	// ExpireConfigLineKey in config file
 	ExpireConfigLineKey = "EXPIRE"
@@ -25,7 +25,7 @@ const (
 	ExpireLayout = "Mon, 02 Jan 2006 15:04:05 -0700"
 )
 
-var userConfigDir string
+var userConfigDir string //当前系统用户配置目录
 
 func init() {
 	userConfigDir, _ = os.UserConfigDir()
@@ -61,7 +61,7 @@ func limitLength(s string, length int) string {
 }
 
 // ReadCookieFromConfigFile read cookies from app config file, if cookie has expired, delete old config file.
-func ReadCookieFromConfigFile(phone string) ([]*http.Cookie, error) {
+func ReadCookieFromConfigFile(phone string) ([]*http.Cookie, error) { //通过手机号 读取cookie
 	dir := filepath.Join(userConfigDir, GeektimeDownloaderFolder)
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
@@ -87,12 +87,12 @@ func ReadCookieFromConfigFile(phone string) ([]*http.Cookie, error) {
 				return nil, err
 			}
 
-			for _, line := range strings.Split(string(data), "\n") {
+			for _, line := range strings.Split(string(data), "\n") { //批量从文件内容中获取cookie
 				s := strings.SplitN(line, " ", 2)
 				if len(s) != 2 {
 					continue
 				}
-				if s[0] == ExpireConfigLineKey && !checkExpire(s[1]) {
+				if s[0] == ExpireConfigLineKey && !checkExpire(s[1]) { //过期返回
 					err := os.Remove(fullName)
 					return nil, err
 				}
