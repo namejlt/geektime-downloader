@@ -109,6 +109,8 @@ Flags:
 
 3. 登录后填入指定课程的开篇页面地址，自动解析下载，要保证有订阅权限
 
+4. 下载完的pdf可能为空白，重试即可
+
 ## Inspired by
 
 * [geektime-dl](https://github.com/mmzou/geektime-dl)
