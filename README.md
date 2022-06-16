@@ -92,10 +92,13 @@ geektime-downloader diy [flags]
 
 Flags:
 -i, --column_diy_id int   指定下载课程id
--c, --concurrency int     下载文章的并发数 (default 4)
+-c, --concurrency int     下载文章的并发数 0 代表不并发且有等待时间 (default 4)
 -f, --folder string       PDF 文件下载目标位置 (default "/Users/tynam/geektime-downloader")
 -h, --help                help for diy
 -u, --phone string        你的极客时间账号(手机号)(required)
+-r, --relogin             是否重新登录
+-s, --sleep int           下载文章间隔时间 毫秒 (default 1000)
+
 
 
 ```
@@ -110,6 +113,8 @@ Flags:
 3. 登录后填入指定课程的开篇页面地址，自动解析下载，要保证有订阅权限
 
 4. 下载完的pdf可能为空白，重试即可
+
+5. 多次空白，请不要用并发下载，并发设置0，设置等待时间
 
 ## Inspired by
 
