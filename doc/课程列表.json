@@ -13,7 +13,7 @@
   },
   {
     "CID": 100002201,
-    "Title  ": "左耳听风",
+    "Title": "左耳听风",
     "AuthorName": "陈皓",
     "Articles": null
   },
@@ -26,7 +26,7 @@
   {
     "CID": 100002601,
     "Title": "邱岳的产品手记",
-    "AuthorName  ": "邱岳",
+    "AuthorName": "邱岳",
     "Articles": null
   },
   {
@@ -39,7 +39,7 @@
     "CID": 100003401,
     "Title": "赵成的运维体系管理课",
     "AuthorName": "赵成",
-    "Articles  ": null
+    "Articles": null
   },
   {
     "CID": 100003901,
@@ -67,7 +67,7 @@
   },
   {
     "CID": 100006501,
-    "Title": "  硅谷产品实战36讲",
+    "Title": "硅谷产品实战36讲",
     "AuthorName": "曲晓音",
     "Articles": null
   },
@@ -121,7 +121,7 @@
   },
   {
     "CID": 100009601,
-    "Title": "  软件测试52讲",
+    "Title": "软件测试52讲",
     "AuthorName": "茹炳晟",
     "Articles": null
   },
@@ -134,7 +134,7 @@
   {
     "CID": 100009801,
     "Title": "快速上手Kotlin开发",
-    "Autho  rName": "张涛",
+    "AuthorName": "张涛",
     "Articles": null
   },
   {
@@ -147,7 +147,7 @@
     "CID": 100012001,
     "Title": "邱岳的产品实战",
     "AuthorName": "邱岳",
-    "Artic  les": null
+    "Articles": null
   },
   {
     "CID": 100012101,
@@ -175,7 +175,7 @@
   },
   {
     "CID": 100015201,
-    "Title": "深入剖析  Kubernetes",
+    "Title": "深入剖析Kubernetes",
     "AuthorName": "张磊",
     "Articles": null
   },
@@ -188,7 +188,7 @@
   {
     "CID": 100017501,
     "Title": "如何设计一个秒杀系统",
-    "Aut  horName": "许令波",
+    "AuthorName": "许令波",
     "Articles": null
   },
   {
@@ -201,7 +201,7 @@
     "CID": 100019701,
     "Title": "算法面试通关40讲",
     "AuthorName": "覃超",
-    "Artic  les": null
+    "Articles": null
   },
   {
     "CID": 100020001,
@@ -229,7 +229,7 @@
   },
   {
     "CID": 100020901,
-    "Title": "Linux性  能优化实战",
+    "Title": "Linux性能优化实战",
     "AuthorName": "倪朋飞",
     "Articles": null
   },
@@ -242,7 +242,7 @@
   {
     "CID": 100021201,
     "Title": "程序员的数学基础课",
-    "Au  thorName": "黄申",
+    "AuthorName": "黄申",
     "Articles": null
   },
   {
@@ -255,7 +255,7 @@
     "CID": 100021701,
     "Title": "数据分析实战45讲",
     "AuthorName": "陈旸",
-    "Article  s": null
+    "Articles": null
   },
   {
     "CID": 100022301,
@@ -270,7 +270,7 @@
     "Articles": null
   },
   {
-    "CI  D": 100023201,
+    "CID": 100023201,
     "Title": "重学前端",
     "AuthorName": "程劭非（winter）",
     "Articles": null
@@ -283,7 +283,7 @@
   },
   {
     "CID": 100023501,
-    "Title": "玩  转Spring全家桶",
+    "Title": "玩转Spring全家桶",
     "AuthorName": "丁雪丰",
     "Articles": null
   },
@@ -296,7 +296,7 @@
   {
     "CID": 100023901,
     "Title": "Java并发编程实战",
-    "AuthorN  ame": "王宝令",
+    "AuthorName": "王宝令",
     "Articles": null
   },
   {
@@ -309,7 +309,7 @@
     "CID": 100024501,
     "Title": "iOS开发高手课",
     "AuthorName": "戴铭",
-    "Articles  ": null
+    "Articles": null
   },
   {
     "CID": 100024601,
@@ -337,7 +337,7 @@
   },
   {
     "CID": 100025301,
-    "Title": "大规模数据处理  实战",
+    "Title": "大规模数据处理实战",
     "AuthorName": "蔡元楠",
     "Articles": null
   },
@@ -350,7 +350,7 @@
   {
     "CID": 100026001,
     "Title": "深入浅出计算机组成原理",
-    "Aut  horName": "徐文浩",
+    "AuthorName": "徐文浩",
     "Articles": null
   },
   {
@@ -362,7 +362,7 @@
   {
     "CID": 100026901,
     "Title": "Python核心技术与实战",
-    "AuthorName": "  景霄",
+    "AuthorName": "景霄",
     "Articles": null
   },
   {
@@ -375,7 +375,7 @@
     "CID": 100027801,
     "Title": "零基础学Java",
     "AuthorName": "臧萌",
-    "Artic  les": null
+    "Articles": null
   },
   {
     "CID": 100028001,
@@ -403,7 +403,7 @@
   },
   {
     "CID": 100029201,
-    "Title  ": "Kafka核心技术与实战",
+    "Title": "Kafka核心技术与实战",
     "AuthorName": "胡夕",
     "Articles": null
   },
@@ -416,7 +416,7 @@
   {
     "CID": 100029601,
     "Title": "Linux实战技能100讲",
-    "  AuthorName": "尹会生",
+    "AuthorName": "尹会生",
     "Articles": null
   },
   {
@@ -428,7 +428,7 @@
   {
     "CID": 100030701,
     "Title": "黄勇的OKR实战笔记",
-    "Author  Name": "黄勇",
+    "AuthorName": "黄勇",
     "Articles": null
   },
   {
@@ -441,7 +441,7 @@
     "CID": 100031101,
     "Title": "编辑训练营",
     "AuthorName": "总编室",
-    "Article  s": null
+    "Articles": null
   },
   {
     "CID": 100031401,
@@ -453,7 +453,7 @@
     "CID": 100031801,
     "Title": "从0打造音视频直播系统",
     "AuthorName": "李超",
-    "  Articles": null
+    "Articles": null
   },
   {
     "CID": 100032201,
@@ -481,7 +481,7 @@
   },
   {
     "CID": 100034001,
-    "Title": "  Swift核心技术与实战",
+    "Title": "Swift核心技术与实战",
     "AuthorName": "张杰",
     "Articles": null
   },
@@ -493,7 +493,7 @@
   },
   {
     "CID": 100034201,
-    "Title": "ZooKeeper实战与源码剖  析",
+    "Title": "ZooKeeper实战与源码剖析",
     "AuthorName": "么敬国",
     "Articles": null
   },
@@ -506,7 +506,7 @@
   {
     "CID": 100034901,
     "Title": "即时消息技术剖析与实战",
-    "AuthorNam  e": "袁武林",
+    "AuthorName": "袁武林",
     "Articles": null
   },
   {
@@ -518,7 +518,7 @@
   {
     "CID": 100035801,
     "Title": "高并发系统设计40问",
-    "AuthorName": "唐扬  ",
+    "AuthorName": "唐扬",
     "Articles": null
   },
   {
@@ -560,7 +560,7 @@
   {
     "CID": 100037701,
     "Title": "苏杰的产品创新课",
-    "Aut  horName": "苏杰",
+    "AuthorName": "苏杰",
     "Articles": null
   },
   {
@@ -572,7 +572,7 @@
   {
     "CID": 100038501,
     "Title": "雷蓓蓓的项目管理实战课",
-    "AuthorName": "雷  蓓蓓",
+    "AuthorName": "雷蓓蓓",
     "Articles": null
   },
   {
@@ -613,7 +613,7 @@
   },
   {
     "CID": 100041701,
-    "Title": "安  全攻防技能30讲",
+    "Title": "安全攻防技能30讲",
     "AuthorName": "何为舟",
     "Articles": null
   },
@@ -625,7 +625,7 @@
   },
   {
     "CID": 100042601,
-    "Title": "小马哥讲Spring核心编程  思想",
+    "Title": "小马哥讲Spring核心编程思想",
     "AuthorName": "小马哥",
     "Articles": null
   },
@@ -654,7 +654,7 @@
     "Articles": null
   },
   {
-    "C  ID": 100044601,
+    "CID": 100044601,
     "Title": ".NET Core开发实战",
     "AuthorName": "肖伟宇",
     "Articles": null
@@ -679,7 +679,7 @@
   },
   {
     "CID": 100046301,
-    "Title": "架构实战案例  解析",
+    "Title": "架构实战案例解析",
     "AuthorName": "王庆友",
     "Articles": null
   },
@@ -734,7 +734,7 @@
   {
     "CID": 100049401,
     "Title": "Service Mesh实战",
-    "Aut  horName": "马若飞",
+    "AuthorName": "马若飞",
     "Articles": null
   },
   {
@@ -746,7 +746,7 @@
   {
     "CID": 100050201,
     "Title": "Serverless入门课",
-    "AuthorName": "蒲松洋（  秦粤）",
+    "AuthorName": "蒲松洋（秦粤）",
     "Articles": null
   },
   {
@@ -787,7 +787,7 @@
   },
   {
     "CID": 100052601,
-    "Title": "  软件设计之美",
+    "Title": "软件设计之美",
     "AuthorName": "郑晔",
     "Articles": null
   },
@@ -812,7 +812,7 @@
   {
     "CID": 100053601,
     "Title": "分布式系统案例课",
-    "AuthorName": "杨波  ",
+    "AuthorName": "杨波",
     "Articles": null
   },
   {
@@ -828,7 +828,7 @@
     "Articles": null
   },
   {
-    "CI  D": 100055001,
+    "CID": 100055001,
     "Title": "Web安全攻防实战",
     "AuthorName": "王昊天",
     "Articles": null
@@ -853,7 +853,7 @@
   },
   {
     "CID": 100056401,
-    "Title": "重学线  性代数",
+    "Title": "重学线性代数",
     "AuthorName": "朱维刚",
     "Articles": null
   },
@@ -866,7 +866,7 @@
   {
     "CID": 100057401,
     "Title": "分布式数据库30讲",
-    "Author  Name": "王磊",
+    "AuthorName": "王磊",
     "Articles": null
   },
   {
@@ -879,7 +879,7 @@
     "CID": 100058001,
     "Title": "Linux内核技术实战课",
     "AuthorName": "邵亚方",
-    "A  rticles": null
+    "Articles": null
   },
   {
     "CID": 100058401,
@@ -894,7 +894,7 @@
     "Articles": null
   },
   {
-    "CI  D": 100059201,
+    "CID": 100059201,
     "Title": "用户体验设计实战课",
     "AuthorName": "相辉",
     "Articles": null
@@ -907,7 +907,7 @@
   },
   {
     "CID": 100060501,
-    "Title  ": "动态规划面试宝典",
+    "Title": "动态规划面试宝典",
     "AuthorName": "卢誉声",
     "Articles": null
   },
@@ -919,7 +919,7 @@
   },
   {
     "CID": 100060801,
-    "Title": "深度学习推荐  系统实战",
+    "Title": "深度学习推荐系统实战",
     "AuthorName": "王喆",
     "Articles": null
   },
@@ -932,7 +932,7 @@
   {
     "CID": 100061901,
     "Title": "Django快速开发实战",
-    "AuthorName": "吕召  刚",
+    "AuthorName": "吕召刚",
     "Articles": null
   },
   {
@@ -945,7 +945,7 @@
     "CID": 100062001,
     "Title": "人人都用得上的写作课",
     "AuthorName": "涵柏",
-    "Ar  ticles": null
+    "Articles": null
   },
   {
     "CID": 100062401,
@@ -973,7 +973,7 @@
   },
   {
     "CID": 100064501,
-    "Title": "大  厂晋升指南",
+    "Title": "大厂晋升指南",
     "AuthorName": "李运华",
     "Articles": null
   },
@@ -986,7 +986,7 @@
   {
     "CID": 100065501,
     "Title": "A/B测试从0到1",
-    "AuthorName": "  张博伟",
+    "AuthorName": "张博伟",
     "Articles": null
   },
   {
@@ -999,7 +999,7 @@
     "CID": 100066601,
     "Title": "成为AI产品经理",
     "AuthorName": "刘海丰",
-    "A  rticles": null
+    "Articles": null
   },
   {
     "CID": 100067701,
@@ -1028,7 +1028,7 @@
   {
     "CID": 100069901,
     "Title": "etcd实战课",
-    "  AuthorName": "唐聪",
+    "AuthorName": "唐聪",
     "Articles": null
   },
   {
@@ -1041,7 +1041,7 @@
     "CID": 100070901,
     "Title": "跟着高手学复盘",
     "AuthorName": "张鹏",
-    "Articles  ": null
+    "Articles": null
   },
   {
     "CID": 100071001,
@@ -1069,7 +1069,7 @@
   },
   {
     "CID": 100073301,
-    "Titl  e": "流程型组织15讲",
+    "Title": "流程型组织15讲",
     "AuthorName": "蒋伟良",
     "Articles": null
   },
@@ -1081,7 +1081,7 @@
   },
   {
     "CID": 100074001,
-    "Title": "高楼的性能工程实  战课",
+    "Title": "高楼的性能工程实战课",
     "AuthorName": "高楼",
     "Articles": null
   },
@@ -1094,7 +1094,7 @@
   {
     "CID": 100076501,
     "Title": "说透数字化转型",
-    "AuthorN  ame": "付晓岩",
+    "AuthorName": "付晓岩",
     "Articles": null
   },
   {
@@ -1135,7 +1135,7 @@
   },
   {
     "CID": 100079901,
-    "Title": "R  eact Hooks 核心原理与实战",
+    "Title": "React Hooks 核心原理与实战",
     "AuthorName": "王沛",
     "Articles": null
   },
@@ -1160,7 +1160,7 @@
   {
     "CID": 100081901,
     "Title": "如何读懂一首诗",
-    "AuthorName": "王天博  ",
+    "AuthorName": "王天博",
     "Articles": null
   },
   {
@@ -1189,7 +1189,7 @@
   },
   {
     "CID": 100084301,
-    "Title": "Redis源码剖  析与实战",
+    "Title": "Redis源码剖析与实战",
     "AuthorName": "蒋德钧",
     "Articles": null
   },
@@ -1202,7 +1202,7 @@
   {
     "CID": 100085101,
     "Title": "程序员的测试课",
-    "AuthorName": "  郑晔",
+    "AuthorName": "郑晔",
     "Articles": null
   },
   {
@@ -1227,7 +1227,7 @@
     "CID": 100085801,
     "Title": "HarmonyOS快速入门与实战",
     "AuthorName": "QCon+案例研习社",
-    "Arti  cles": null
+    "Articles": null
   },
   {
     "CID": 100085501,
@@ -1255,7 +1255,7 @@
   },
   {
     "CID": 100091501,
-    "  Title": "手把手带你搭建秒杀系统",
+    "Title": "手把手带你搭建秒杀系统",
     "AuthorName": "佘志东",
     "Articles": null
   },
@@ -1267,7 +1267,7 @@
   },
   {
     "CID": 100093501,
-    "Title": "Ton  y Bai · Go语言第一课",
+    "Title": "Tony Bai · Go语言第一课",
     "AuthorName": "Tony Bai",
     "Articles": null
   },
@@ -1279,7 +1279,7 @@
   },
   {
     "CID": 100093001,
-    "Title": "全链路压测实战  30讲",
+    "Title": "全链路压测实战30讲",
     "AuthorName": "高楼",
     "Articles": null
   },
@@ -1292,7 +1292,7 @@
   {
     "CID": 100095401,
     "Title": "超级访谈：对话张雪峰",
-    "Autho  rName": "张雪峰",
+    "AuthorName": "张雪峰",
     "Articles": null
   },
   {
@@ -1305,7 +1305,7 @@
     "CID": 100098901,
     "Title": "攻克视频技术",
     "AuthorName": "李江",
-    "Artic  les": null
+    "Articles": null
   },
   {
     "CID": 100098801,
@@ -1345,7 +1345,7 @@
   },
   {
     "CID": 100102601,
-    "Title  ": "去无方向的信",
+    "Title": "去无方向的信",
     "AuthorName": "小麥",
     "Articles": null
   },
@@ -1370,7 +1370,7 @@
   {
     "CID": 100104501,
     "Title": "eBPF 核心技术与实战",
-    "AuthorNa  me": "倪朋飞",
+    "AuthorName": "倪朋飞",
     "Articles": null
   },
   {
@@ -1382,7 +1382,7 @@
   {
     "CID": 100105701,
     "Title": "李智慧 · 高并发架构实战课",
-    "AuthorName  ": "李智慧",
+    "AuthorName": "李智慧",
     "Articles": null
   },
   {
@@ -1423,7 +1423,7 @@
   },
   {
     "CID": 100111101,
-    "Ti  tle": "遗留系统现代化实战",
+    "Title": "遗留系统现代化实战",
     "AuthorName": "姚琪琳",
     "Articles": null
   },
@@ -1435,7 +1435,7 @@
   },
   {
     "CID": 100112401,
-    "Title": "说透元  宇宙",
+    "Title": "说透元宇宙",
     "AuthorName": "方军",
     "Articles": null
   },
