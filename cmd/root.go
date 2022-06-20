@@ -28,9 +28,13 @@ var (
 	l                  *spinner.Spinner
 	columnDiyId        int
 	sleep              int
+	sleepMax           int
 	reLogin            bool
 	columns            []geektime.ColumnSummary
 	currentColumnIndex int
+
+	//脚本批量下载
+	columnIDsFile string //cid 每行一个
 )
 
 func init() {
@@ -50,6 +54,17 @@ func init() {
 	selectDiyCmd.Flags().IntVarP(&sleep, "sleep", "s", 1000, "下载文章间隔时间 毫秒")
 	selectDiyCmd.Flags().BoolVarP(&reLogin, "relogin", "r", false, "是否重新登录")
 	_ = selectDiyCmd.MarkFlagRequired("column_diy_id")
+
+	batchDownCmd.Flags().StringVarP(&phone, "phone", "u", "", "你的极客时间账号(手机号)(required)")
+	_ = batchDownCmd.MarkFlagRequired("phone")
+	batchDownCmd.Flags().StringVarP(&downloadFolder, "folder", "f", defaultDownloadFolder, "PDF 文件下载目标位置")
+	batchDownCmd.Flags().IntVarP(&concurrency, "concurrency", "c", defaultConcurency, "下载文章的并发数 0 代表不并发且有等待时间")
+	batchDownCmd.Flags().StringVarP(&columnIDsFile, "column_ids_file", "i", "./doc/cid.txt", "指定下载课程id文件")
+	batchDownCmd.Flags().IntVarP(&sleep, "sleep", "s", 1000, "下载文章间隔时间 毫秒")
+	batchDownCmd.Flags().IntVarP(&sleepMax, "sleepmax", "m", 5000, "下载文章间隔时间 毫秒 max")
+	batchDownCmd.Flags().BoolVarP(&reLogin, "relogin", "r", false, "是否重新登录")
+	_ = batchDownCmd.MarkFlagRequired("column_ids_file")
+
 	l = loader.NewSpinner()
 }
 
@@ -196,7 +211,7 @@ func handleSelectDownloadAll(option int, client *resty.Client) {
 	case 0:
 		selectColumn(client)
 	case 1:
-		handleDownloadAll(client)
+		handleDownloadAll(client, true)
 	case 2:
 		selectArticle(client)
 	}
@@ -227,7 +242,7 @@ func handleSelectArticle(articles []geektime.ArticleSummary, index int, client *
 	selectArticle(client)
 }
 
-func handleDownloadAll(client *resty.Client) {
+func handleDownloadAll(client *resty.Client, pause bool) {
 	cTitle := columns[currentColumnIndex].Title
 	articles := loadArticles(client)
 	var counter uint64
@@ -267,10 +282,12 @@ func handleDownloadAll(client *resty.Client) {
 					atomic.AddUint64(&counter, 1)
 				}
 			})
-			util.SleepMS(sleep)
+			util.SleepMS(sleep, sleepMax)
 		}
 	}
-	selectColumn(client)
+	if pause {
+		selectColumn(client)
+	}
 }
 
 func loadArticles(client *resty.Client) []geektime.ArticleSummary {
@@ -300,7 +317,7 @@ func mkColumnDownloadFolder(phone, columnName string) (string, error) {
 
 // Execute func 执行函数
 func Execute() {
-	rootCmd.AddCommand(selectColumnCmd, selectDiyCmd)
+	rootCmd.AddCommand(selectColumnCmd, selectDiyCmd, batchDownCmd)
 
 	if err := rootCmd.Execute(); err != nil {
 		printErrAndExit(err)
@@ -309,5 +326,10 @@ func Execute() {
 
 func printErrAndExit(err error) { // 打印报错
 	fmt.Fprintln(os.Stderr, err)
+	os.Exit(1)
+}
+
+func printMsgAndExit(msg string) { // 打印信息
+	fmt.Fprintln(os.Stdout, msg)
 	os.Exit(1)
 }
