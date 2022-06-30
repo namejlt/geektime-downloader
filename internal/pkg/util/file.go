@@ -3,6 +3,7 @@ package util
 import (
 	"errors"
 	"fmt"
+	pgt "github.com/namejlt/geektime-downloader/pconst"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -10,8 +11,6 @@ import (
 	"runtime"
 	"strings"
 	"time"
-
-	pgt "github.com/namejlt/geektime-downloader/internal/pkg/geektime"
 )
 
 const (

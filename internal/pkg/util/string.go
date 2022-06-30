@@ -11,7 +11,7 @@ func GetOsLineSep() string {
 	case "linux":
 		return "\n"
 	case "darwin":
-		return "\r"
+		return "\n"
 	default:
 		return "\n"
 	}

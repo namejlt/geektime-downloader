@@ -1,12 +1,17 @@
 package geektime
 
 import (
+	"fmt"
 	"github.com/go-resty/resty/v2"
+	pgt "github.com/namejlt/geektime-downloader/pconst"
 	"net/http"
 	"time"
-
-	pgt "github.com/namejlt/geektime-downloader/internal/pkg/geektime"
 )
+
+type UserAuth struct {
+	AppID int
+	Uid   int
+}
 
 // Login call geektime login api and return auth cookies
 func Login(phone, password string) (string, []*http.Cookie) {
@@ -57,4 +62,34 @@ func Login(phone, password string) (string, []*http.Cookie) {
 		return "", cookies
 	}
 	return result.Error.Msg, nil
+}
+
+// CheckAuth 检测是否登录
+func CheckAuth(client *resty.Client, columnId int) (data UserAuth, err error) {
+	var result struct {
+		Code int `json:"code"`
+		Data struct {
+			AppID int `json:"appid"`
+			UID   int `json:"uid"`
+		} `json:"data"`
+	}
+	if columnId == 0 {
+		columnId = 100109401
+	}
+	client.SetHeader("Referer", fmt.Sprintf(pgt.GeekBang+"/column/intro/%d", columnId)) //课程页面
+	_, err = client.R().
+		SetResult(&result).
+		Get(fmt.Sprintf(pgt.GeekBangAccount+"/serv/v1/user/auth?t=%d", time.Now().UnixMicro()))
+
+	if err != nil {
+		return
+	}
+	if result.Code == 0 {
+		data = UserAuth{
+			AppID: result.Data.AppID,
+			Uid:   result.Data.UID,
+		}
+		return
+	}
+	return
 }

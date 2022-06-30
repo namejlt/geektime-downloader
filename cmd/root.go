@@ -12,7 +12,6 @@ import (
 	"sync/atomic"
 
 	"github.com/briandowns/spinner"
-	"github.com/gammazero/workerpool"
 	"github.com/namejlt/geektime-downloader/cmd/prompt"
 	"github.com/namejlt/geektime-downloader/internal/geektime"
 	"github.com/namejlt/geektime-downloader/internal/loader"
@@ -74,109 +73,6 @@ var rootCmd = &cobra.Command{
 	Short: "Geektime-downloader is used to download geek time lessons",
 	Run: func(cmd *cobra.Command, args []string) {
 		//不执行内容 具体执行在子命令
-	},
-}
-
-// selectColumnCmd 选择栏目
-var selectColumnCmd = &cobra.Command{
-	Use:   "columns",
-	Short: "Geektime-downloader is used to download geek time lessons",
-	Run: func(cmd *cobra.Command, args []string) {
-		readCookies, err := util.ReadCookieFromConfigFile(phone) //获取登录态
-		if err != nil {
-			printErrAndExit(err)
-		}
-		if readCookies == nil { // 不存在 则登录
-			pwd := prompt.GetPwd()
-			loader.Run(l, "[ 正在登录... ]", func() {
-				errMsg, cookies := geektime.Login(phone, pwd)
-				if errMsg != "" {
-					fmt.Fprintln(os.Stderr, errMsg)
-					os.Exit(1)
-				}
-				readCookies = cookies
-				err := util.WriteCookieToConfigFile(phone, cookies) //保存登录态
-				if err != nil {
-					printErrAndExit(err)
-				}
-			})
-			fmt.Println("登录成功")
-		}
-		client := geektime.NewTimeGeekRestyClient(readCookies) //封装包含登录态的http client
-
-		/**
-
-		根据已有栏目下载
-
-		*/
-
-		loader.Run(l, "[ 正在加载已购买专栏列表... ]", func() {
-			c, err := geektime.GetColumnList(client)
-			if err != nil {
-				printErrAndExit(err)
-			}
-			columns = c
-		})
-
-		selectColumn(client)
-	},
-}
-
-// selectDiyCmd 手工选择课程下载
-var selectDiyCmd = &cobra.Command{
-	Use:   "diy",
-	Short: "Geektime-downloader is used to download geek time lessons diy",
-	Run: func(cmd *cobra.Command, args []string) {
-		readCookies, err := util.ReadCookieFromConfigFile(phone) //获取登录态
-		if err != nil {
-			printErrAndExit(err)
-		}
-		//是否重新登录
-		if reLogin {
-			if err := util.RemoveConfig(phone); err != nil {
-				printErrAndExit(err)
-			} else {
-				fmt.Println("清空登录态, 尝试重新登录")
-			}
-			readCookies = nil
-		}
-		if readCookies == nil { // 不存在 则登录
-			pwd := prompt.GetPwd()
-			loader.Run(l, "[ 正在登录... ]", func() {
-				errMsg, cookies := geektime.Login(phone, pwd)
-				if errMsg != "" {
-					fmt.Fprintln(os.Stderr, errMsg)
-					os.Exit(1)
-				}
-				readCookies = cookies
-				err := util.WriteCookieToConfigFile(phone, cookies) //保存登录态
-				if err != nil {
-					printErrAndExit(err)
-				}
-			})
-			fmt.Println("登录成功")
-		}
-		client := geektime.NewTimeGeekRestyClient(readCookies) //封装包含登录态的http client
-
-		/**
-
-		1、根据入参找到对应课程并检查权限
-		2、批量下载课程
-
-		*/
-		loader.Run(l, "[ 正在检测课程是否有权限... ]", func() {
-			c, err := geektime.GetColumnInfo(client, columnDiyId)
-			if err != nil {
-				printErrAndExit(err)
-			}
-			if c.CID == 0 { //仅检测是否存在 要保证有权限获取全部文章 不然下载的是试读
-				err = errors.New("栏目不存在 或 请重新登录")
-				printErrAndExit(err)
-			}
-			columns = append(columns, c)
-		})
-
-		selectColumn(client)
 	},
 }
 
@@ -251,7 +147,8 @@ func handleDownloadAll(client *resty.Client, pause bool) {
 		printErrAndExit(err)
 	}
 	if concurrency > 0 {
-		wp := workerpool.New(concurrency)
+		printMsgAndExit("不支持")
+		/*wp := workerpool.New(concurrency)
 		for _, a := range articles {
 			aid := a.AID
 			title := a.Title
@@ -267,7 +164,7 @@ func handleDownloadAll(client *resty.Client, pause bool) {
 				})
 			})
 		}
-		wp.StopWait()
+		wp.StopWait()*/
 	} else {
 		//单个处理 并sleep
 		for _, a := range articles {

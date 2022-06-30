@@ -2,6 +2,7 @@ package chromedp
 
 import (
 	"context"
+	pgt "github.com/namejlt/geektime-downloader/pconst"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -15,7 +16,6 @@ import (
 	"github.com/chromedp/cdproto/runtime"
 	"github.com/chromedp/chromedp"
 	"github.com/chromedp/chromedp/device"
-	pgt "github.com/namejlt/geektime-downloader/internal/pkg/geektime"
 )
 
 // PrintArticlePageToPDF use chromedp to print article page and save

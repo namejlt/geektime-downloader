@@ -3,6 +3,7 @@ package geektime
 import (
 	"errors"
 	"fmt"
+	pgt "github.com/namejlt/geektime-downloader/pconst"
 
 	"github.com/go-resty/resty/v2"
 )
@@ -12,6 +13,8 @@ type ColumnSummary struct {
 	CID        int //课程id
 	Title      string
 	AuthorName string
+	Type       string
+	IsVideo    bool
 	Articles   []ArticleSummary
 }
 
@@ -34,7 +37,7 @@ func GetColumnList(client *resty.Client) ([]ColumnSummary, error) {
 		} `json:"error"`
 	}
 
-	client.SetHeader("Referer", "https://time.geekbang.org/dashboard/course") //我的课程页面
+	client.SetHeader("Referer", pgt.GeekBang+"/dashboard/course") //我的课程页面
 	_, err := client.R().
 		SetBody(
 			map[string]interface{}{
@@ -80,6 +83,9 @@ func GetColumnInfo(client *resty.Client, columnId int) (data ColumnSummary, err 
 
 			ID    int    `json:"id"`
 			Title string `json:"title"`
+
+			IsVideo bool   `json:"is_video"` // 是否视频
+			Type    string `json:"type"`
 		} `json:"data"`
 		Error struct {
 			Code int    `json:"code"`
@@ -87,11 +93,11 @@ func GetColumnInfo(client *resty.Client, columnId int) (data ColumnSummary, err 
 		} `json:"error"`
 	}
 
-	client.SetHeader("Referer", fmt.Sprintf("https://time.geekbang.org/column/intro/%d", columnId)) //课程页面
+	client.SetHeader("Referer", fmt.Sprintf(pgt.GeekBang+"/column/intro/%d", columnId)) //课程页面
 	_, err = client.R().
 		SetBody(
 			map[string]interface{}{
-				"with_recommend_article": true,
+				"with_recommend_article": false,
 				"product_id":             columnId,
 			}).
 		SetResult(&result).
@@ -106,6 +112,8 @@ func GetColumnInfo(client *resty.Client, columnId int) (data ColumnSummary, err 
 			CID:        result.Data.ID,
 			Title:      result.Data.Title,
 			AuthorName: result.Data.Author.Name,
+			IsVideo:    result.Data.IsVideo,
+			Type:       result.Data.Type,
 		}
 		return
 	}

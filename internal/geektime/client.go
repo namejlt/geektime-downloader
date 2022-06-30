@@ -2,10 +2,9 @@ package geektime
 
 import (
 	"github.com/go-resty/resty/v2"
+	pgt "github.com/namejlt/geektime-downloader/pconst"
 	"net/http"
 	"time"
-
-	pgt "github.com/namejlt/geektime-downloader/internal/pkg/geektime"
 )
 
 // UserAgent is Web browser User Agent

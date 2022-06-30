@@ -14,6 +14,15 @@ import (
 	"strings"
 )
 
+/**
+
+通过外置文件批量下载
+
+通过本地数据库批量下载，同时更新数据库内容
+
+
+*/
+
 // batchDownCmd 批量下载
 var batchDownCmd = &cobra.Command{
 	Use:   "batch",
@@ -50,6 +59,17 @@ var batchDownCmd = &cobra.Command{
 		}
 		client := geektime.NewTimeGeekRestyClient(readCookies) //封装包含登录态的http client
 
+		loader.Run(l, "[ 正在检测是否登录... ]", func() {
+			c, err := geektime.CheckAuth(client, 0)
+			if err != nil {
+				printErrAndExit(err)
+			}
+			if c.Uid == 0 {
+				err = errors.New("登录态失效，请重新登录")
+				printErrAndExit(err)
+			}
+		})
+
 		/**
 
 		1、根据入参找到对应课程id的文件
@@ -67,13 +87,13 @@ var batchDownCmd = &cobra.Command{
 		}
 
 		columnDiyId, _ = strconv.Atoi(columnIdS[0])
-		loader.Run(l, "[ 正在检测课程是否有权限... ]", func() {
+		loader.Run(l, "[ 正在检测课程是否有效... ]", func() {
 			c, err := geektime.GetColumnInfo(client, columnDiyId)
 			if err != nil {
 				printErrAndExit(err)
 			}
 			if c.CID == 0 { //仅检测是否存在 要保证有权限获取全部文章 不然下载的是试读
-				err = errors.New("栏目不存在 或 请重新登录")
+				err = errors.New("栏目不存在")
 				printErrAndExit(err)
 			}
 		})
@@ -82,6 +102,16 @@ var batchDownCmd = &cobra.Command{
 		currentColumnIndex = 0
 		for _, v := range columnIdS {
 			columnDiyId, _ = strconv.Atoi(v)
+			loader.Run(l, "[ 正在检测是否登录... ]", func() {
+				c, err := geektime.CheckAuth(client, columnDiyId)
+				if err != nil {
+					printErrAndExit(err)
+				}
+				if c.Uid == 0 {
+					err = errors.New("登录态失效，请重新登录")
+					printErrAndExit(err)
+				}
+			})
 			//获取课程
 			column, err := geektime.GetColumnInfo(client, columnDiyId)
 			if err != nil {
@@ -89,6 +119,10 @@ var batchDownCmd = &cobra.Command{
 			}
 			if column.CID == 0 {
 				fmt.Println("id", v, "课程不存在")
+				continue
+			}
+			if column.IsVideo {
+				fmt.Println("id", v, "课程视频跳过")
 				continue
 			}
 			if len(columns) == 0 {
