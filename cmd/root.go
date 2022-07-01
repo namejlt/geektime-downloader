@@ -4,10 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-resty/resty/v2"
-	"math"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strconv"
 	"sync/atomic"
 
@@ -22,7 +20,6 @@ import (
 
 var (
 	phone              string
-	concurrency        int
 	downloadFolder     string
 	l                  *spinner.Spinner
 	columnDiyId        int
@@ -34,35 +31,34 @@ var (
 
 	//脚本批量下载
 	columnIDsFile string //cid 每行一个
+
+	//下载类型
+	pdf   bool
+	md    bool
+	audio bool
+	video bool
 )
 
 func init() {
 	userHomeDir, _ := os.UserHomeDir()
-	defaultConcurency := int(math.Ceil(float64(runtime.NumCPU()) / 2.0))
 	defaultDownloadFolder := filepath.Join(userHomeDir, util.GeektimeDownloaderFolder)
-	selectColumnCmd.Flags().StringVarP(&phone, "phone", "u", "", "你的极客时间账号(手机号)(required)")
-	_ = selectColumnCmd.MarkFlagRequired("phone")
-	selectColumnCmd.Flags().StringVarP(&downloadFolder, "folder", "f", defaultDownloadFolder, "PDF 文件下载目标位置")
-	selectColumnCmd.Flags().IntVarP(&concurrency, "concurrency", "c", defaultConcurency, "下载文章的并发数")
 
-	selectDiyCmd.Flags().StringVarP(&phone, "phone", "u", "", "你的极客时间账号(手机号)(required)")
-	_ = selectDiyCmd.MarkFlagRequired("phone")
-	selectDiyCmd.Flags().StringVarP(&downloadFolder, "folder", "f", defaultDownloadFolder, "PDF 文件下载目标位置")
-	selectDiyCmd.Flags().IntVarP(&concurrency, "concurrency", "c", defaultConcurency, "下载文章的并发数 0 代表不并发且有等待时间")
+	//公共参数
+
+	rootCmd.PersistentFlags().StringVarP(&phone, "phone", "u", "", "你的极客时间账号(手机号)(required)")
+	_ = rootCmd.MarkFlagRequired("phone")
+	rootCmd.PersistentFlags().StringVarP(&downloadFolder, "folder", "f", defaultDownloadFolder, "PDF 文件下载目标位置")
+
 	selectDiyCmd.Flags().IntVarP(&columnDiyId, "column_diy_id", "i", 0, "指定下载课程id")
+	_ = selectDiyCmd.MarkFlagRequired("column_diy_id")
 	selectDiyCmd.Flags().IntVarP(&sleep, "sleep", "s", 1000, "下载文章间隔时间 毫秒")
 	selectDiyCmd.Flags().BoolVarP(&reLogin, "relogin", "r", false, "是否重新登录")
-	_ = selectDiyCmd.MarkFlagRequired("column_diy_id")
 
-	batchDownCmd.Flags().StringVarP(&phone, "phone", "u", "", "你的极客时间账号(手机号)(required)")
-	_ = batchDownCmd.MarkFlagRequired("phone")
-	batchDownCmd.Flags().StringVarP(&downloadFolder, "folder", "f", defaultDownloadFolder, "PDF 文件下载目标位置")
-	batchDownCmd.Flags().IntVarP(&concurrency, "concurrency", "c", defaultConcurency, "下载文章的并发数 0 代表不并发且有等待时间")
 	batchDownCmd.Flags().StringVarP(&columnIDsFile, "column_ids_file", "i", "./doc/cid.txt", "指定下载课程id文件")
+	_ = batchDownCmd.MarkFlagRequired("column_ids_file")
 	batchDownCmd.Flags().IntVarP(&sleep, "sleep", "s", 1000, "下载文章间隔时间 毫秒")
 	batchDownCmd.Flags().IntVarP(&sleepMax, "sleepmax", "m", 5000, "下载文章间隔时间 毫秒 max")
 	batchDownCmd.Flags().BoolVarP(&reLogin, "relogin", "r", false, "是否重新登录")
-	_ = batchDownCmd.MarkFlagRequired("column_ids_file")
 
 	l = loader.NewSpinner()
 }
@@ -146,42 +142,23 @@ func handleDownloadAll(client *resty.Client, pause bool) {
 	if err != nil {
 		printErrAndExit(err)
 	}
-	if concurrency > 0 {
-		printMsgAndExit("不支持")
-		/*wp := workerpool.New(concurrency)
-		for _, a := range articles {
-			aid := a.AID
-			title := a.Title
-			wp.Submit(func() {
-				prefix := fmt.Sprintf("[ 正在下载专栏 《%s》 中的所有文章, 已完成下载%d/%d ... ]", cTitle, counter, len(articles))
-				loader.Run(l, prefix, func() {
-					err := chromedp.PrintArticlePageToPDF(aid, filepath.Join(folder, util.FileName(title, "pdf")), client.Cookies)
-					if err != nil {
-						printErrAndExit(err)
-					} else {
-						atomic.AddUint64(&counter, 1)
-					}
-				})
-			})
-		}
-		wp.StopWait()*/
-	} else {
-		//单个处理 并sleep
-		for _, a := range articles {
-			aid := a.AID
-			title := a.Title
-			prefix := fmt.Sprintf("[ 正在下载专栏 《%s》 中的所有文章, 已完成下载%d/%d ... ]", cTitle, counter, len(articles))
-			loader.Run(l, prefix, func() {
-				err := chromedp.PrintArticlePageToPDF(aid, filepath.Join(folder, util.FileName(title, "pdf")), client.Cookies)
-				if err != nil {
-					printErrAndExit(err)
-				} else {
-					atomic.AddUint64(&counter, 1)
-				}
-			})
-			util.SleepMS(sleep, sleepMax)
-		}
+
+	//单个处理 并sleep
+	for _, a := range articles {
+		aid := a.AID
+		title := a.Title
+		prefix := fmt.Sprintf("[ 正在下载专栏 《%s》 中的所有文章, 已完成下载%d/%d ... ]", cTitle, counter, len(articles))
+		loader.Run(l, prefix, func() {
+			err := chromedp.PrintArticlePageToPDF(aid, filepath.Join(folder, util.FileName(title, "pdf")), client.Cookies)
+			if err != nil {
+				printErrAndExit(err)
+			} else {
+				atomic.AddUint64(&counter, 1)
+			}
+		})
+		util.SleepMS(sleep, sleepMax)
 	}
+
 	if pause {
 		selectColumn(client)
 	}
