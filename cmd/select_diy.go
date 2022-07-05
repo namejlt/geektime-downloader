@@ -53,16 +53,27 @@ var selectDiyCmd = &cobra.Command{
 		2、批量下载课程
 
 		*/
-		loader.Run(l, "[ 正在检测课程是否有权限... ]", func() {
+		loader.Run(l, "[ 正在检测课程是否有效... ]", func() {
 			c, err := geektime.GetColumnInfo(client, columnDiyId)
 			if err != nil {
 				printErrAndExit(err)
 			}
 			if c.CID == 0 { //仅检测是否存在 要保证有权限获取全部文章 不然下载的是试读
-				err = errors.New("栏目不存在 或 请重新登录")
+				err = errors.New("栏目不存在")
 				printErrAndExit(err)
 			}
 			columns = append(columns, c)
+		})
+
+		loader.Run(l, "[ 正在检测是否登录... ]", func() {
+			c, err := geektime.CheckAuth(client, columnDiyId)
+			if err != nil {
+				printErrAndExit(err)
+			}
+			if c.Uid == 0 {
+				err = errors.New("登录态失效，请重新登录")
+				printErrAndExit(err)
+			}
 		})
 
 		selectColumn(client)

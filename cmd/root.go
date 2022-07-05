@@ -1,9 +1,13 @@
 package cmd
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/go-resty/resty/v2"
+	audiodown "github.com/namejlt/geektime-downloader/internal/pkg/audio"
+	"github.com/namejlt/geektime-downloader/internal/pkg/markdown"
+	videodown "github.com/namejlt/geektime-downloader/internal/pkg/video"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -28,6 +32,7 @@ var (
 	reLogin            bool
 	columns            []geektime.ColumnSummary
 	currentColumnIndex int
+	quality            string
 
 	//脚本批量下载
 	columnIDsFile string //cid 每行一个
@@ -47,7 +52,12 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVarP(&phone, "phone", "u", "", "你的极客时间账号(手机号)(required)")
 	_ = rootCmd.MarkFlagRequired("phone")
-	rootCmd.PersistentFlags().StringVarP(&downloadFolder, "folder", "f", defaultDownloadFolder, "PDF 文件下载目标位置")
+	rootCmd.PersistentFlags().StringVarP(&downloadFolder, "folder", "f", defaultDownloadFolder, "下载目标位置")
+	rootCmd.PersistentFlags().BoolVarP(&pdf, "pdf", "p", true, "PDF是否下载")
+	rootCmd.PersistentFlags().BoolVarP(&md, "md", "d", false, "markdown是否下载")
+	rootCmd.PersistentFlags().BoolVarP(&audio, "audio", "a", false, "音频是否下载")
+	rootCmd.PersistentFlags().BoolVarP(&video, "video", "v", false, "视频是否下载")
+	rootCmd.PersistentFlags().StringVarP(&quality, "quality", "q", "sd", "下载视频清晰度(ld标清,sd高清,hd超清)")
 
 	selectDiyCmd.Flags().IntVarP(&columnDiyId, "column_diy_id", "i", 0, "指定下载课程id")
 	_ = selectDiyCmd.MarkFlagRequired("column_diy_id")
@@ -57,7 +67,7 @@ func init() {
 	batchDownCmd.Flags().StringVarP(&columnIDsFile, "column_ids_file", "i", "./doc/cid.txt", "指定下载课程id文件")
 	_ = batchDownCmd.MarkFlagRequired("column_ids_file")
 	batchDownCmd.Flags().IntVarP(&sleep, "sleep", "s", 1000, "下载文章间隔时间 毫秒")
-	batchDownCmd.Flags().IntVarP(&sleepMax, "sleepmax", "m", 5000, "下载文章间隔时间 毫秒 max")
+	batchDownCmd.Flags().IntVarP(&sleepMax, "sleepmax", "m", 1200, "下载文章间隔时间 毫秒 max")
 	batchDownCmd.Flags().BoolVarP(&reLogin, "relogin", "r", false, "是否重新登录")
 
 	l = loader.NewSpinner()
@@ -103,7 +113,7 @@ func handleSelectDownloadAll(option int, client *resty.Client) {
 	case 0:
 		selectColumn(client)
 	case 1:
-		handleDownloadAll(client, true)
+		handleDownloadAll(client, true, []geektime.ArticleSummary{}, 0)
 	case 2:
 		selectArticle(client)
 	}
@@ -115,11 +125,12 @@ func selectArticle(client *resty.Client) {
 	handleSelectArticle(articles, index, client)
 }
 
+//下载单个文章
 func handleSelectArticle(articles []geektime.ArticleSummary, index int, client *resty.Client) {
 	if index == 0 {
 		handleSelectColumn(client)
 	}
-	a := articles[index-1]
+	/*a := articles[index-1]
 	folder, err := mkColumnDownloadFolder(phone, columns[currentColumnIndex].Title)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -130,32 +141,73 @@ func handleSelectArticle(articles []geektime.ArticleSummary, index int, client *
 		if err != nil {
 			printErrAndExit(err)
 		}
-	})
+	})*/
+
+	handleDownloadAll(client, false, articles, index)
+
 	selectArticle(client)
 }
 
-func handleDownloadAll(client *resty.Client, pause bool) {
+//下载所有
+func handleDownloadAll(client *resty.Client, pause bool, articles []geektime.ArticleSummary, index int) {
 	cTitle := columns[currentColumnIndex].Title
-	articles := loadArticles(client)
+	isColumn := isColumn(columns[currentColumnIndex].Type)
+	isVideo := isVideo(columns[currentColumnIndex].Type)
+	if len(articles) == 0 {
+		articles = loadArticles(client)
+	}
+
+	if index != 0 { //只获取指定文章
+		articles = articles[index-1 : index]
+	}
+
 	var counter uint64
 	folder, err := mkColumnDownloadFolder(phone, cTitle)
 	if err != nil {
 		printErrAndExit(err)
 	}
-
+	ctx := context.Background()
 	//单个处理 并sleep
 	for _, a := range articles {
 		aid := a.AID
 		title := a.Title
-		prefix := fmt.Sprintf("[ 正在下载专栏 《%s》 中的所有文章, 已完成下载%d/%d ... ]", cTitle, counter, len(articles))
-		loader.Run(l, prefix, func() {
-			err := chromedp.PrintArticlePageToPDF(aid, filepath.Join(folder, util.FileName(title, "pdf")), client.Cookies)
-			if err != nil {
-				printErrAndExit(err)
+		prefix := fmt.Sprintf("[ 正在下载专栏 《%s》 中的所有文章或视频, 已完成下载%d/%d ... ]", cTitle, counter, len(articles))
+
+		if pdf { //无论课程还是视频都可以生成pdf
+			loader.Run(l, prefix, func() {
+				err := chromedp.PrintArticlePageToPDF(aid, filepath.Join(folder, util.FileName(title, "pdf")), client.Cookies)
+				if err != nil {
+					printErrAndExit(err)
+				} else {
+					atomic.AddUint64(&counter, 1)
+				}
+			})
+		}
+		if md || audio {
+			if isColumn {
+				articleInfo, err := geektime.GetArticleInfo(a.AID, client)
+				checkError(err)
+				if md {
+					err = markdown.Download(ctx, articleInfo.ArticleContent, a.Title, folder, a.AID, 1)
+				}
+				if audio {
+					err = audiodown.DownloadAudio(ctx, articleInfo.AudioDownloadURL, folder, a.Title)
+				}
 			} else {
-				atomic.AddUint64(&counter, 1)
+				println(cTitle, a.Title, "非课程")
 			}
-		})
+		}
+
+		if video {
+			if isVideo {
+				videoInfo, err := geektime.GetVideoInfo(a.AID, client, quality)
+				checkError(err)
+				err = videodown.DownloadVideo(ctx, videoInfo.M3U8URL, a.Title, folder, int64(videoInfo.Size), 1)
+				checkError(err)
+			}
+			println(cTitle, a.Title, "无视频")
+		}
+
 		util.SleepMS(sleep, sleepMax)
 	}
 

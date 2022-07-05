@@ -132,7 +132,15 @@ var batchDownCmd = &cobra.Command{
 			}
 
 			//download
-			handleDownloadAll(client, false)
+			handleDownloadAll(client, false, []geektime.ArticleSummary{}, 0)
 		}
 	},
+}
+
+func isColumn(columnType string) bool {
+	return columnType == "c1"
+}
+
+func isVideo(columnType string) bool {
+	return columnType == "c3"
 }
