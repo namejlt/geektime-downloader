@@ -224,8 +224,9 @@ func handleDownloadAll(client *resty.Client, pause bool, articles []geektime.Art
 				checkError(err)
 				err = videodown.DownloadVideo(ctx, videoInfo.M3U8URL, a.Title+quality, folder, int64(videoInfo.Size), 1)
 				checkError(err)
+			} else {
+				println(cTitle, a.Title, "无视频")
 			}
-			println(cTitle, a.Title, "无视频")
 		}
 
 		util.SleepMS(sleep, sleepMax)
