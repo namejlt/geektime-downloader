@@ -38,10 +38,11 @@ var (
 	columnIDsFile string //cid 每行一个
 
 	//下载类型
-	pdf   bool
-	md    bool
-	audio bool
-	video bool
+	columnType int
+	pdf        bool
+	md         bool
+	audio      bool
+	video      bool
 )
 
 func init() {
@@ -58,6 +59,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&audio, "audio", "a", false, "音频是否下载")
 	rootCmd.PersistentFlags().BoolVarP(&video, "video", "v", false, "视频是否下载")
 	rootCmd.PersistentFlags().StringVarP(&quality, "quality", "q", "sd", "下载视频清晰度(ld标清,sd高清,hd超清)")
+	rootCmd.PersistentFlags().IntVarP(&columnType, "columntype", "t", 1, "课程类型 1 全部 2 视频 3 图文")
 
 	selectDiyCmd.Flags().IntVarP(&columnDiyId, "column_diy_id", "i", 0, "指定下载课程id")
 	_ = selectDiyCmd.MarkFlagRequired("column_diy_id")
@@ -153,6 +155,24 @@ func handleDownloadAll(client *resty.Client, pause bool, articles []geektime.Art
 	cTitle := columns[currentColumnIndex].Title
 	isColumn := isColumn(columns[currentColumnIndex].Type)
 	isVideo := isVideo(columns[currentColumnIndex].Type)
+
+	//检测下载类型
+	switch columnType {
+	case 1:
+	case 2: //仅视频
+		if isColumn {
+			fmt.Println("课程类型跳过")
+			return
+		}
+	case 3: //仅图文
+		if isVideo {
+			fmt.Println("课程类型跳过")
+			return
+		}
+	default:
+
+	}
+
 	if len(articles) == 0 {
 		articles = loadArticles(client)
 	}
@@ -202,7 +222,7 @@ func handleDownloadAll(client *resty.Client, pause bool, articles []geektime.Art
 			if isVideo {
 				videoInfo, err := geektime.GetVideoInfo(a.AID, client, quality)
 				checkError(err)
-				err = videodown.DownloadVideo(ctx, videoInfo.M3U8URL, a.Title, folder, int64(videoInfo.Size), 1)
+				err = videodown.DownloadVideo(ctx, videoInfo.M3U8URL, a.Title+quality, folder, int64(videoInfo.Size), 1)
 				checkError(err)
 			}
 			println(cTitle, a.Title, "无视频")
