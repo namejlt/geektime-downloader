@@ -25,7 +25,7 @@ clean:
 	rm -rf dist/
 
 run:
-	dist/downloader
+	./dist/geektime-downloader -h
 
 stop:
 	pkill -f dist/geektime-downloader

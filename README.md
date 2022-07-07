@@ -1,6 +1,6 @@
 # geektime-downloader
 
-geektime-downloader 目前支持下载指定课程为PDF文档
+geektime-downloader 目前支持下载指定课程为PDF文档、markdown、音频、视频
 
 [![go report card](https://goreportcard.com/badge/github.com/namejlt/geektime-downloader "go report card")](https://goreportcard.com/report/github.com/namejlt/geektime-downloader)
 [![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
@@ -10,6 +10,7 @@ geektime-downloader 目前支持下载指定课程为PDF文档
 ### Prerequisites
 
 Chrome installed
+sqlite installed - sync geektime column id to local
 
 ### Install form source
 
@@ -102,6 +103,19 @@ Flags:
 
 
 ```
+
+## Core logic
+
+获取课程
+
+通过接口全量获取课程id、课程类型、名称、
+
+下载课程
+
+pdf通过调用chrome生成整页
+md拉取html转换，其中会下载image
+audio直接下载音频地址
+video涉及到aes加密和视频拆分，先获取key，然后拉取所有视频，解密拼接
 
 ## Note
 
