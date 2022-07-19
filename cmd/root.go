@@ -5,13 +5,17 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-resty/resty/v2"
+	"github.com/namejlt/geektime-downloader/dao"
 	audiodown "github.com/namejlt/geektime-downloader/internal/pkg/audio"
 	"github.com/namejlt/geektime-downloader/internal/pkg/markdown"
 	videodown "github.com/namejlt/geektime-downloader/internal/pkg/video"
+	"github.com/namejlt/geektime-downloader/model"
+	"github.com/namejlt/geektime-downloader/pconst"
 	"os"
 	"path/filepath"
 	"strconv"
 	"sync/atomic"
+	"time"
 
 	"github.com/namejlt/geektime-downloader/cmd/prompt"
 	"github.com/namejlt/geektime-downloader/internal/geektime"
@@ -126,12 +130,12 @@ func handleDownloadAll(client *resty.Client, pause bool, articles []geektime.Art
 	case 1:
 	case 2: //仅视频
 		if isColumn {
-			fmt.Println("课程类型跳过")
+			fmt.Println("图文课程类型跳过")
 			return
 		}
 	case 3: //仅图文
 		if isVideo {
-			fmt.Println("课程类型跳过")
+			fmt.Println("视频课程类型跳过")
 			return
 		}
 	default:
@@ -159,24 +163,45 @@ func handleDownloadAll(client *resty.Client, pause bool, articles []geektime.Art
 		prefix := fmt.Sprintf("[ 正在下载专栏 《%s》 中的所有文章或视频, 已完成下载%d/%d ... ]", cTitle, counter, len(articles))
 
 		if pdf { //无论课程还是视频都可以生成pdf
-			loader.Run(l, prefix, func() {
-				err := chromedp.PrintArticlePageToPDF(aid, filepath.Join(folder, util.FileName(title, "pdf")), client.Cookies)
-				if err != nil {
-					printErrAndExit(err)
-				} else {
-					atomic.AddUint64(&counter, 1)
-				}
-			})
+			//检测是否已下载
+			check, err := checkCourseDownload(columns[currentColumnIndex].CID, aid, pconst.DownloadTypePdf)
+			checkError(err)
+			if !check {
+				loader.Run(l, prefix, func() {
+					err := chromedp.PrintArticlePageToPDF(aid, filepath.Join(folder, util.FileName(title, "pdf")), client.Cookies)
+					if err != nil {
+						printErrAndExit(err)
+					} else {
+						atomic.AddUint64(&counter, 1)
+					}
+				})
+				err = saveCourseDownload(columns[currentColumnIndex].CID, aid, cTitle, pconst.DownloadTypePdf)
+				checkError(err)
+			}
 		}
 		if md || audio {
 			if isColumn {
 				articleInfo, err := geektime.GetArticleInfo(a.AID, client)
 				checkError(err)
 				if md {
-					err = markdown.Download(ctx, articleInfo.ArticleContent, a.Title, folder, a.AID, 1)
+					check, err := checkCourseDownload(columns[currentColumnIndex].CID, aid, pconst.DownloadTypeMD)
+					checkError(err)
+					if !check {
+						err = markdown.Download(ctx, articleInfo.ArticleContent, a.Title, folder, a.AID, 1)
+						checkError(err)
+						err = saveCourseDownload(columns[currentColumnIndex].CID, aid, cTitle, pconst.DownloadTypeMD)
+						checkError(err)
+					}
 				}
 				if audio {
-					err = audiodown.DownloadAudio(ctx, articleInfo.AudioDownloadURL, folder, a.Title)
+					check, err := checkCourseDownload(columns[currentColumnIndex].CID, aid, pconst.DownloadTypeAudio)
+					checkError(err)
+					if !check {
+						err = audiodown.DownloadAudio(ctx, articleInfo.AudioDownloadURL, folder, a.Title)
+						checkError(err)
+						err = saveCourseDownload(columns[currentColumnIndex].CID, aid, cTitle, pconst.DownloadTypeAudio)
+						checkError(err)
+					}
 				}
 			} else {
 				println(cTitle, a.Title, "非课程")
@@ -185,10 +210,16 @@ func handleDownloadAll(client *resty.Client, pause bool, articles []geektime.Art
 
 		if video {
 			if isVideo {
-				videoInfo, err := geektime.GetVideoInfo(a.AID, client, quality)
+				check, err := checkCourseDownload(columns[currentColumnIndex].CID, aid, pconst.DownloadTypeVideo)
 				checkError(err)
-				err = videodown.DownloadVideo(ctx, videoInfo.M3U8URL, a.Title+quality, folder, int64(videoInfo.Size), 1)
-				checkError(err)
+				if !check {
+					videoInfo, err := geektime.GetVideoInfo(a.AID, client, quality)
+					checkError(err)
+					err = videodown.DownloadVideo(ctx, videoInfo.M3U8URL, a.Title+quality, folder, int64(videoInfo.Size), 1)
+					checkError(err)
+					err = saveCourseDownload(columns[currentColumnIndex].CID, aid, cTitle, pconst.DownloadTypeVideo) //视频记录一次
+					checkError(err)
+				}
 			} else {
 				println(cTitle, a.Title, "无视频")
 			}
@@ -236,4 +267,28 @@ func printErrAndExit(err error) { // 打印报错
 func printMsgAndExit(msg string) { // 打印信息
 	fmt.Fprintln(os.Stdout, msg)
 	os.Exit(1)
+}
+
+func checkCourseDownload(columnId int, articleId int, downloadType int) (b bool, err error) {
+	info, err := dao.NewDb(dbPath).GetCourseDownloadRecord(uint64(columnId), articleId, downloadType)
+	if err != nil {
+		return
+	}
+	if info.Id != 0 {
+		b = true
+	}
+	return
+}
+
+func saveCourseDownload(columnId int, articleId int, articleName string, downloadType int) (err error) {
+	addData := model.CourseDownloadRecord{}
+	addData.CourseId = uint64(columnId)
+	addData.ArticleId = uint64(articleId)
+	addData.ArticleName = articleName
+	addData.DownloadType = uint8(downloadType)
+	now := time.Now().Unix()
+	addData.CreatedAt = now
+	addData.UpdatedAt = now
+	err = dao.NewDb(dbPath).SaveCourseDownloadRecord(addData)
+	return
 }

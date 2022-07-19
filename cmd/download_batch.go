@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/namejlt/geektime-downloader/cmd/prompt"
+	"github.com/namejlt/geektime-downloader/dao"
 	"github.com/namejlt/geektime-downloader/internal/geektime"
 	"github.com/namejlt/geektime-downloader/internal/loader"
 	"github.com/namejlt/geektime-downloader/internal/pkg/util"
@@ -121,8 +122,13 @@ var batchDownCmd = &cobra.Command{
 				fmt.Println("id", v, "课程不存在")
 				continue
 			}
-			if column.IsVideo {
-				fmt.Println("id", v, "课程视频跳过")
+			//检测课程是否在db中
+			check, err := checkCourse(column.CID)
+			if err != nil {
+				printErrAndExit(err)
+			}
+			if !check {
+				fmt.Println("id", v, "课程在DB不存在")
 				continue
 			}
 			if len(columns) == 0 {
@@ -143,4 +149,15 @@ func isColumn(columnType string) bool {
 
 func isVideo(columnType string) bool {
 	return columnType == "c3"
+}
+
+func checkCourse(columnId int) (b bool, err error) {
+	info, err := dao.NewDb(dbPath).GetCourse(uint64(columnId))
+	if err != nil {
+		return
+	}
+	if info.Id != 0 {
+		b = true
+	}
+	return
 }

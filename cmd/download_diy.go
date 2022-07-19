@@ -76,6 +76,15 @@ var selectDiyCmd = &cobra.Command{
 			}
 		})
 
+		//检测课程是否在db中
+		check, err := checkCourse(columnDiyId)
+		if err != nil {
+			printErrAndExit(err)
+		}
+		if !check {
+			printMsgAndExit(fmt.Sprintln("id", columnDiyId, "课程在DB不存在"))
+		}
+
 		selectColumn(client)
 	},
 }

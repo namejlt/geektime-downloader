@@ -68,10 +68,6 @@ func InitDb(dbPath string, must bool) {
 	    is_finish INTEGER not null,
 	    is_audio INTEGER not null,
 	    is_video INTEGER not null,
-	    is_pdf_download INTEGER not null,
-	    is_markdown_download INTEGER not null,
-	    is_video_download INTEGER not null,
-	    is_audio_download INTEGER not null,
 	    created_at INTEGER not null,
 	    updated_at INTEGER not null
 	                    );
@@ -87,6 +83,7 @@ func InitDb(dbPath string, must bool) {
 	create table course_download_record (
 	    id integer not null primary key, 
 	    course_id INTEGER not null,
+	    article_id INTEGER not null,
 	    article_name TEXT not null,
 	    download_type INTEGER not null,
 	    created_at INTEGER not null,
