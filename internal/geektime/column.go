@@ -186,5 +186,6 @@ func GetColumnInfo(client *resty.Client, columnId int) (data ColumnSummary, err 
 }
 
 func replaceSep(str string) string {
-	return strings.ReplaceAll(str, string(filepath.Separator), "")
+	str = strings.ReplaceAll(str, string(filepath.Separator), "")
+	return strings.TrimRight(str, " ")
 }

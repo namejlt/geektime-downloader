@@ -77,11 +77,11 @@ func CheckAuth(client *resty.Client, columnId int) (data UserAuth, err error) {
 		columnId = 100109401
 	}
 	client.SetHeader("Referer", fmt.Sprintf(pgt.GeekBang+"/column/intro/%d", columnId)) //课程页面
-	_, err = client.R().
+	resp, err := client.R().
 		SetResult(&result).
 		Get(fmt.Sprintf(pgt.GeekBangAccount+"/serv/v1/user/auth?t=%d", time.Now().UnixMicro()))
-
 	if err != nil {
+		fmt.Println("失去登录态", resp.Result())
 		return
 	}
 	if result.Code == 0 {
