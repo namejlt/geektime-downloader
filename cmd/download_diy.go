@@ -16,6 +16,8 @@ var selectDiyCmd = &cobra.Command{
 	Use:   "diy",
 	Short: "Geektime-downloader is used to download geek time lessons diy",
 	Run: func(cmd *cobra.Command, args []string) {
+		checkArgs()
+
 		readCookies, err := util.ReadCookieFromConfigFile(phone) //获取登录态
 		if err != nil {
 			printErrAndExit(err)

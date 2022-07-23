@@ -20,13 +20,12 @@ const (
 )
 
 // UserAgent is Web browser User Agent
-const UserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.92 Safari/537.36"
 
 // NewTimeGeekRestyClient new Http Client with user auth cookies
 func NewTimeGeekRestyClient(cookies []*http.Cookie) *resty.Client {
 	return resty.New().
 		SetTimeout(30*time.Second).
-		SetHeader("User-Agent", UserAgent).
+		SetHeader("User-Agent", pgt.UserAgentHeaderValue).
 		SetHeader("Origin", pgt.GeekBang).
 		SetBaseURL(pgt.GeekBang).
 		SetCookies(cookies)

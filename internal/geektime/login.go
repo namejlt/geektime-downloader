@@ -17,7 +17,7 @@ type UserAuth struct {
 func Login(phone, password string) (string, []*http.Cookie) {
 	client := resty.New().
 		SetTimeout(5*time.Second).
-		SetHeader("User-Agent", UserAgent).
+		SetHeader("User-Agent", pgt.UserAgentHeaderValue).
 		SetHeader("Content-Type", "application/json").
 		SetHeader("Accept", "application/json").
 		SetHeader("Connection", "keep-alive").

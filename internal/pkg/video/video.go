@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"github.com/cheggaaa/pb/v3"
@@ -13,6 +14,8 @@ import (
 	"github.com/namejlt/geektime-downloader/pconst"
 	"golang.org/x/sync/errgroup"
 	"io/ioutil"
+	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 	"sort"
@@ -64,8 +67,10 @@ func getClient() *resty.Client {
 			SetTimeout(10*time.Second).
 			SetHeader(pconst.UserAgentHeaderName, pconst.UserAgentHeaderValue).
 			SetHeader(pconst.OriginHeaderName, pconst.GeekBang).
-			SetLogger(logger.DiscardLogger{})
+			SetLogger(logger.DiscardLogger{}).
+			SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true}) //定义TLSClientConfig，忽略证书校验
 	})
+	fmt.Println(clientOnce.c.Header)
 	return clientOnce.c
 }
 
@@ -81,6 +86,8 @@ func DownloadVideo(ctx context.Context, m3u8url, title, projectDir string, size 
 		return
 	}
 	if decryptkmsURL == "" || len(tsFileNames) == 0 {
+		log.Println("DownloadVideo param:", m3u8url, title, projectDir, size, concurrency)
+		log.Println("DownloadVideo error:", decryptkmsURL, tsFileNames, err)
 		return errors.New("unexpected m3u8 response format")
 	}
 
@@ -170,9 +177,15 @@ loop:
 }
 
 func readM3U8File(ctx context.Context, url string) (decryptkmsURL string, tsFileNames []string, err error) {
-	resp, err := getClient().R().SetContext(ctx).Get(url)
+	resp, err := getClient().
+		R().
+		SetContext(ctx).
+		Get(url)
 	if err != nil {
 		return
+	}
+	if resp.StatusCode() == http.StatusGone {
+		log.Println("readM3U8File status return 410 gone!!")
 	}
 	s := string(resp.Body())
 	lines := strings.Split(s, "\n")

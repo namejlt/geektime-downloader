@@ -29,6 +29,8 @@ var batchDownCmd = &cobra.Command{
 	Use:   "batch",
 	Short: "Geektime-downloader is used to download geek time lessons batch download by column ids",
 	Run: func(cmd *cobra.Command, args []string) {
+		checkArgs()
+
 		readCookies, err := util.ReadCookieFromConfigFile(phone) //获取登录态
 		if err != nil {
 			printErrAndExit(err)

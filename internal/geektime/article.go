@@ -45,7 +45,7 @@ func GetArticles(cid string, client *resty.Client) ([]ArticleSummary, error) {
 		for _, v := range result.Data.List {
 			articles = append(articles, ArticleSummary{
 				AID:   v.ID,
-				Title: v.ArticleTitle,
+				Title: replaceInvalid(v.ArticleTitle),
 			})
 		}
 		return articles, nil

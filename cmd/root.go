@@ -210,14 +210,14 @@ func handleDownloadAll(client *resty.Client, pause bool, articles []geektime.Art
 
 		if video {
 			if isVideo {
-				check, err := checkCourseDownload(columns[currentColumnIndex].CID, aid, pconst.DownloadTypeVideo)
+				check, err := checkCourseDownload(columns[currentColumnIndex].CID, aid, pconst.DownloadTypeVideoMap[quality])
 				checkError(err)
 				if !check {
 					videoInfo, err := geektime.GetVideoInfo(a.AID, client, quality)
 					checkError(err)
 					err = videodown.DownloadVideo(ctx, videoInfo.M3U8URL, a.Title+quality, folder, int64(videoInfo.Size), 1)
 					checkError(err)
-					err = saveCourseDownload(columns[currentColumnIndex].CID, aid, cTitle, pconst.DownloadTypeVideo) //视频记录一次
+					err = saveCourseDownload(columns[currentColumnIndex].CID, aid, cTitle, pconst.DownloadTypeVideoMap[quality]) //视频记录一次
 					checkError(err)
 				}
 			} else {
@@ -291,4 +291,14 @@ func saveCourseDownload(columnId int, articleId int, articleName string, downloa
 	addData.UpdatedAt = now
 	err = dao.NewDb(dbPath).SaveCourseDownloadRecord(addData)
 	return
+}
+
+func checkArgs() {
+	checkQuality(quality)
+}
+
+func checkQuality(quality string) {
+	if _, ok := pconst.DownloadTypeVideoMap[quality]; !ok {
+		printMsgAndExit("quality is error")
+	}
 }

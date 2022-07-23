@@ -16,6 +16,8 @@ const (
 	OriginHeaderName = "Origin"
 	// UserAgentHeaderValue ...
 	UserAgentHeaderValue = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.92 Safari/537.36"
+	//UserAgentHeaderValue = "Mozilla/5.0 (Linux; U; Android 11; zh-CN; HD1900 Build/RKQ1.201022.002) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/78.0.3904.108 Quark/5.8.0.220 Mobile Safari/537.36"
+	//UserAgentHeaderValue = "Dalvik/2.1.0 (Linux; U; Android 11; HD1900 Build/RKQ1.201022.002)"
 )
 
 var (

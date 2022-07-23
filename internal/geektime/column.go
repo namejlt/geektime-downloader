@@ -5,6 +5,7 @@ import (
 	"fmt"
 	pgt "github.com/namejlt/geektime-downloader/pconst"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/go-resty/resty/v2"
@@ -113,7 +114,7 @@ func GetColumnList(client *resty.Client) ([]ColumnSummary, error) {
 		for _, v := range result.Data.Products {
 			products = append(products, ColumnSummary{
 				CID:        v.ID,
-				Title:      replaceSep(v.Title),
+				Title:      replaceInvalid(v.Title),
 				AuthorName: v.Author.Name,
 			})
 		}
@@ -171,7 +172,7 @@ func GetColumnInfo(client *resty.Client, columnId int) (data ColumnSummary, err 
 	if result.Code == 0 {
 		data = ColumnSummary{
 			CID:          result.Data.ID,
-			Title:        replaceSep(result.Data.Title),
+			Title:        replaceInvalid(result.Data.Title),
 			Desc:         result.Data.Path.Desc,
 			AuthorName:   result.Data.Author.Name,
 			IsVideo:      result.Data.IsVideo,
@@ -185,7 +186,15 @@ func GetColumnInfo(client *resty.Client, columnId int) (data ColumnSummary, err 
 	return
 }
 
-func replaceSep(str string) string {
+func replaceInvalid(str string) string {
 	str = strings.ReplaceAll(str, string(filepath.Separator), "")
-	return strings.TrimRight(str, " ")
+	invalid := `[\/:*?"<>|]+`
+
+	reg, err := regexp.Compile(invalid)
+	if err != nil {
+		fmt.Println(err)
+	}
+	str = reg.ReplaceAllString(str, "")
+	str = strings.TrimRight(str, " ")
+	return str
 }
