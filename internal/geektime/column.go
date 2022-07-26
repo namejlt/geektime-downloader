@@ -188,7 +188,7 @@ func GetColumnInfo(client *resty.Client, columnId int) (data ColumnSummary, err 
 
 func replaceInvalid(str string) string {
 	str = strings.ReplaceAll(str, string(filepath.Separator), "")
-	invalid := `[\/:*?"<>|]+`
+	invalid := `[\/:*?"<>|]+` //去掉异常文章标题字符
 
 	reg, err := regexp.Compile(invalid)
 	if err != nil {

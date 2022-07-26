@@ -70,7 +70,6 @@ func getClient() *resty.Client {
 			SetLogger(logger.DiscardLogger{}).
 			SetTLSClientConfig(&tls.Config{InsecureSkipVerify: true}) //定义TLSClientConfig，忽略证书校验
 	})
-	fmt.Println(clientOnce.c.Header)
 	return clientOnce.c
 }
 

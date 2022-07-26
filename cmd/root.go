@@ -175,7 +175,7 @@ func handleDownloadAll(client *resty.Client, pause bool, articles []geektime.Art
 						atomic.AddUint64(&counter, 1)
 					}
 				})
-				err = saveCourseDownload(columns[currentColumnIndex].CID, aid, cTitle, pconst.DownloadTypePdf)
+				err = saveCourseDownload(columns[currentColumnIndex].CID, aid, title, pconst.DownloadTypePdf)
 				checkError(err)
 			}
 		}
@@ -189,7 +189,7 @@ func handleDownloadAll(client *resty.Client, pause bool, articles []geektime.Art
 					if !check {
 						err = markdown.Download(ctx, articleInfo.ArticleContent, a.Title, folder, a.AID, 1)
 						checkError(err)
-						err = saveCourseDownload(columns[currentColumnIndex].CID, aid, cTitle, pconst.DownloadTypeMD)
+						err = saveCourseDownload(columns[currentColumnIndex].CID, aid, title, pconst.DownloadTypeMD)
 						checkError(err)
 					}
 				}
@@ -199,7 +199,7 @@ func handleDownloadAll(client *resty.Client, pause bool, articles []geektime.Art
 					if !check {
 						err = audiodown.DownloadAudio(ctx, articleInfo.AudioDownloadURL, folder, a.Title)
 						checkError(err)
-						err = saveCourseDownload(columns[currentColumnIndex].CID, aid, cTitle, pconst.DownloadTypeAudio)
+						err = saveCourseDownload(columns[currentColumnIndex].CID, aid, title, pconst.DownloadTypeAudio)
 						checkError(err)
 					}
 				}
@@ -217,7 +217,7 @@ func handleDownloadAll(client *resty.Client, pause bool, articles []geektime.Art
 					checkError(err)
 					err = videodown.DownloadVideo(ctx, videoInfo.M3U8URL, a.Title+quality, folder, int64(videoInfo.Size), 1)
 					checkError(err)
-					err = saveCourseDownload(columns[currentColumnIndex].CID, aid, cTitle, pconst.DownloadTypeVideoMap[quality]) //视频记录一次
+					err = saveCourseDownload(columns[currentColumnIndex].CID, aid, title, pconst.DownloadTypeVideoMap[quality]) //视频记录一次
 					checkError(err)
 				}
 			} else {
