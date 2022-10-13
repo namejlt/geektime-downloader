@@ -4,11 +4,10 @@ import (
 	"database/sql"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/namejlt/geektime-downloader/model"
-	"github.com/namejlt/geektime-downloader/pconst"
 	"log"
 )
 
-//SaveCourse 保存课程到本地 增加或更新
+// SaveCourse 保存课程到本地 增加或更新
 func (p *Geek) SaveCourse(addData model.Course) (err error) {
 	db, err := p.getDb()
 	if err != nil {
@@ -28,7 +27,7 @@ func (p *Geek) SaveCourse(addData model.Course) (err error) {
 	if id == 0 {
 		//新增
 		_, err = db.Exec("INSERT INTO course(course_id, course_name, course_desc, author,course_type,article_count,"+
-			"is_finish,is_audio,is_video,is_pdf_download,is_markdown_download,is_video_download,is_audio_download,created_at,updated_at) "+
+			"is_finish,is_audio,is_video,created_at,updated_at) "+
 			"VALUES( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )",
 			addData.CourseId,
 			addData.CourseName,
@@ -39,10 +38,6 @@ func (p *Geek) SaveCourse(addData model.Course) (err error) {
 			addData.IsFinish,
 			addData.IsAudio,
 			addData.IsVideo,
-			pconst.CommonFalse,
-			pconst.CommonFalse,
-			pconst.CommonFalse,
-			pconst.CommonFalse,
 			addData.CreatedAt,
 			addData.UpdatedAt,
 		)
